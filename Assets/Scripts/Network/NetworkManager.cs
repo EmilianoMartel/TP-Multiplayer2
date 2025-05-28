@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRunnerCallbacks
 {
+    [SerializeField] private InputActionReference moveAction;
     [SerializeField] private NetworkPrefabRef playerPrefab;
     [SerializeField] private Transform[] spawnPositions;
 
@@ -18,11 +20,11 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
     public event Action<string> OnNewPlayerJoined;
     public event Action<string> OnJoinedPlayerLeft;
 
-    //public NetworkPlayerController LocalPlayer { get; set; }
-
+   public NetworkPlayerController LocalPlayer { get; set; }
 
     async void Start()
     {
+        moveAction.action.Enable();
         bool sessionStarted = await StartGameSession();
 
         if (!sessionStarted)
@@ -125,27 +127,27 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
 
     void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input)
     {
-        /*if (!LocalPlayer)
+        if (!LocalPlayer)
             return;
 
         NetworkInputData networkInput = new NetworkInputData();
 
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        Vector2 moveInput = moveAction.action.ReadValue<Vector2>();
 
-        networkInput.LookDirection = LocalPlayer.GetNormalizedLookDirection();
+        networkInput.Direction = moveInput.normalized;
 
-        if (verticalInput > 0f)
+        if (moveInput.y > 0f)
             networkInput.AddInput(NetworkInputType.MoveForward);
-        else if (verticalInput < 0f)
+        else if (moveInput.y < 0f)
             networkInput.AddInput(NetworkInputType.MoveBackwards);
 
-        if (horizontalInput < 0f)
+        if (moveInput.x < 0f)
             networkInput.AddInput(NetworkInputType.MoveLeft);
-        else if (horizontalInput > 0f)
+        else if (moveInput.x > 0f)
             networkInput.AddInput(NetworkInputType.MoveRight);
 
-        input.Set(networkInput);*/
+
+        input.Set(networkInput);
     }
 
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }

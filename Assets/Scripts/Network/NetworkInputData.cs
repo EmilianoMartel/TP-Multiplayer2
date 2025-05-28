@@ -3,6 +3,20 @@ using UnityEngine;
 
 public struct NetworkInputData : INetworkInput
 {
-    public Vector2 direction;
-    public bool shoot;
+    private byte buttonsPressed;
+
+    public Vector2 Direction;
+    public bool Shoot;
+
+    public void AddInput(NetworkInputType inputType)
+    {
+        byte flag = (byte)(1 << (int)inputType);
+        buttonsPressed |= flag;
+    }
+
+    public readonly bool IsInputDown(NetworkInputType inputType)
+    {
+        byte flag = (byte)(1 << (int)inputType);
+        return (buttonsPressed & flag) != 0;
+    }
 }

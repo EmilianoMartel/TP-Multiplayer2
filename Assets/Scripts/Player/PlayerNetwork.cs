@@ -11,10 +11,10 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (GetInput<NetworkInputData>(out var input))
         {
-            Vector2 move = input.direction * speed * Runner.DeltaTime;
+            Vector2 move = input.Direction * speed * Runner.DeltaTime;
             transform.position += new Vector3(move.x, move.y, 0);
 
-            if (input.shoot)
+            if (input.Shoot)
             {
                 Runner.Spawn(bulletPrefab, firePoint.position, firePoint.rotation, Object.InputAuthority);
             }
