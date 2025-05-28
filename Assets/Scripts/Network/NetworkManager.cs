@@ -9,11 +9,13 @@ using UnityEngine.InputSystem;
 public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRunnerCallbacks
 {
     [SerializeField] private InputActionReference moveAction;
+    [SerializeField] private InputActionReference lookAction;
     [SerializeField] private NetworkPrefabRef playerPrefab;
     [SerializeField] private Transform[] spawnPositions;
 
     private readonly Dictionary<PlayerRef, NetworkObject> spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
     private NetworkRunner networkRunner;
+    private Camera _camera;
 
     public event Action OnConnected;
     public event Action OnDisconnected;
@@ -24,6 +26,7 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
 
     async void Start()
     {
+        _camera = Camera.main;
         moveAction.action.Enable();
         bool sessionStarted = await StartGameSession();
 
@@ -136,11 +139,19 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
 
         networkInput.Direction = moveInput.normalized;
 
+        Vector2 mouseScreenPos = lookAction.action.ReadValue<Vector2>();
+
+        Vector3 mouseWorldPos = _camera.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
+
+        Vector2 playerPos = LocalPlayer.transform.position;
+        Vector2 lookDir = (mouseWorldPos - (Vector3)playerPos).normalized;
+
+        networkInput.LookDirection = lookDir;
+
         if (moveInput.y > 0f)
             networkInput.AddInput(NetworkInputType.MoveForward);
         else if (moveInput.y < 0f)
             networkInput.AddInput(NetworkInputType.MoveBackwards);
-
         if (moveInput.x < 0f)
             networkInput.AddInput(NetworkInputType.MoveLeft);
         else if (moveInput.x > 0f)

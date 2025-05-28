@@ -1,12 +1,20 @@
 using System;
 using UnityEngine;
 using Fusion;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(NetworkTransform))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class NetworkPlayerController : NetworkBehaviour
 {
+    [Header("Shoot")]
+    [SerializeField] private InputActionReference shootAction;
+    [SerializeField] private Transform shootPoint;
+    [SerializeField] private NetworkPrefabRef bulletPrefab;
+
+    [Header("Parameters")]
     [SerializeField] private Transform cameraTarget;
+    [SerializeField] private Transform view;
     [SerializeField] private float moveSpeed = 5f;
 
     private Rigidbody2D _rigidbody2D;
@@ -14,6 +22,16 @@ public class NetworkPlayerController : NetworkBehaviour
 
     public event Action OnMovementStarted;
     public event Action OnMovementStopped;
+
+    private void OnEnable()
+    {
+        shootAction.action.performed += HandleShoot;
+    }
+
+    private void OnDisable()
+    {
+        shootAction.action.performed -= HandleShoot;
+    }
 
     private void Awake()
     {
@@ -57,6 +75,8 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             OnMovementStopped?.Invoke();
         }
+
+        RotateAimTarget(networkInput.LookDirection);
     }
 
     private Vector2 GetMoveDirection(NetworkInputData networkInput)
@@ -76,5 +96,25 @@ public class NetworkPlayerController : NetworkBehaviour
             moveDirection += Vector2.right;
 
         return moveDirection.normalized;
+    }
+
+    private void RotateAimTarget(Vector2 lookDir)
+    {
+        float rotationZ = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg;
+        view.rotation = Quaternion.Euler(0f, 0f, rotationZ - 90f); //This magic number is the offset view
+    }
+
+    private void HandleShoot(InputAction.CallbackContext ctx)
+    {
+        if (!Object.HasInputAuthority)
+            return;
+
+        Rpc_SpawnBullet(shootPoint.position, shootPoint.rotation);
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void Rpc_SpawnBullet(Vector3 position, Quaternion rotation)
+    {
+        Runner.Spawn(bulletPrefab, position, rotation, Object.InputAuthority);
     }
 }

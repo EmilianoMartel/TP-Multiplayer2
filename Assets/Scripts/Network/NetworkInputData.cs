@@ -6,6 +6,7 @@ public struct NetworkInputData : INetworkInput
     private byte buttonsPressed;
 
     public Vector2 Direction;
+    public Vector2 LookDirection;
     public bool Shoot;
 
     public void AddInput(NetworkInputType inputType)
