@@ -122,7 +122,7 @@ public class NetworkPlayerController : NetworkBehaviour
         Runner.Spawn(bulletPrefab, position, rotation, Object.InputAuthority);
     }
 
-    public void Damage(float damage)
+    public bool Damage(float damage)
     {
         currentLife -= damage;
 
@@ -130,5 +130,7 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             Debug.Log("Player is death");
         }
+
+        return currentLife <= 0;
     }
 }
