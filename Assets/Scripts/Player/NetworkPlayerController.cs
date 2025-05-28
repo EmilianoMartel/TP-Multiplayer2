@@ -7,18 +7,21 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 public class NetworkPlayerController : NetworkBehaviour
 {
+    [SerializeField] private Transform cameraTarget;
+    [SerializeField] private Transform view;
+
     [Header("Shoot")]
     [SerializeField] private InputActionReference shootAction;
     [SerializeField] private Transform shootPoint;
     [SerializeField] private NetworkPrefabRef bulletPrefab;
 
     [Header("Parameters")]
-    [SerializeField] private Transform cameraTarget;
-    [SerializeField] private Transform view;
+    [SerializeField] private float maxLife = 10f;
     [SerializeField] private float moveSpeed = 5f;
 
     private Rigidbody2D _rigidbody2D;
     private bool isMoving;
+    private float currentLife;
 
     public event Action OnMovementStarted;
     public event Action OnMovementStopped;
@@ -35,6 +38,7 @@ public class NetworkPlayerController : NetworkBehaviour
 
     private void Awake()
     {
+        currentLife = maxLife;
         _rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
@@ -116,5 +120,15 @@ public class NetworkPlayerController : NetworkBehaviour
     private void Rpc_SpawnBullet(Vector3 position, Quaternion rotation)
     {
         Runner.Spawn(bulletPrefab, position, rotation, Object.InputAuthority);
+    }
+
+    public void Damage(float damage)
+    {
+        currentLife -= damage;
+
+        if(currentLife <= 0)
+        {
+            Debug.Log("Player is death");
+        }
     }
 }

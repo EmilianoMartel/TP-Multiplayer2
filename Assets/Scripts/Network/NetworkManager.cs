@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRunnerCallbacks
 {
@@ -14,6 +15,8 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
     [SerializeField] private Transform[] spawnPositions;
 
     private readonly Dictionary<PlayerRef, NetworkObject> spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
+    private readonly Dictionary<PlayerRef, PlayerStats> playerStats = new();
+
     private NetworkRunner networkRunner;
     private Camera _camera;
 
@@ -69,8 +72,10 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
     {
         Vector3 spawnPosition = spawnPositions[spawnedPlayers.Count].position;
         NetworkObject networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
+        spawnedPlayers[player] = networkPlayerObject;
 
-        spawnedPlayers.Add(player, networkPlayerObject);
+        if(networkPlayerObject.TryGetComponent<PlayerStats>(out PlayerStats stats))
+            playerStats[player] = stats;
     }
 
     private void DespawnPlayer(NetworkRunner runner, PlayerRef player)

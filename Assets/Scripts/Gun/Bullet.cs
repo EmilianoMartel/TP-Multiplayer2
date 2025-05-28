@@ -4,6 +4,7 @@ using System.Collections;
 
 public class Bullet : NetworkBehaviour
 {
+    [SerializeField] private float damage = 1f;
     [SerializeField] private float speed = 10f;
 
     public override void Spawned()

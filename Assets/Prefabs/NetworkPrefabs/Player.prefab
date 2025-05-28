@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 1054307954889207079}
   - component: {fileID: 3259525859443407692}
   - component: {fileID: 2728130748679592959}
+  - component: {fileID: 2998052374007429048}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -146,6 +147,7 @@ MonoBehaviour:
   - {fileID: 3046610773141166307}
   - {fileID: 8634777702512041500}
   - {fileID: 1054307954889207079}
+  - {fileID: 2998052374007429048}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &3046610773141166307
 MonoBehaviour:
@@ -174,12 +176,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97ee611634478ea46b0f3389c85a7c9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraTarget: {fileID: 0}
+  view: {fileID: 7502922787591293129}
   shootAction: {fileID: 1120369429361536294, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   shootPoint: {fileID: 2352082479807939768}
   bulletPrefab:
     RawGuidValue: 88bfcbbd193f60b478a89246b6de14c3
-  cameraTarget: {fileID: 0}
-  view: {fileID: 7502922787591293129}
+  maxLife: 10
   moveSpeed: 5
 --- !u!114 &1054307954889207079
 MonoBehaviour:
@@ -271,6 +274,19 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 0.7874452}
   m_EdgeRadius: 0
+--- !u!114 &2998052374007429048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7948649253927207806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21f29b6da376571478de641e531720db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Kills: 0
 --- !u!1 &9209303606117295263
 GameObject:
   m_ObjectHideFlags: 0
