@@ -14,6 +14,7 @@ public class NetworkPlayerController : NetworkBehaviour
     [Header("Shoot")]
     [SerializeField] private InputActionReference shootAction;
     [SerializeField] private Transform shootPoint;
+    [SerializeField] private float _shootColdDown = 1.5f;
     [SerializeField] private NetworkPrefabRef bulletPrefab;
 
     [Header("Parameters")]
@@ -23,6 +24,8 @@ public class NetworkPlayerController : NetworkBehaviour
     private Rigidbody2D _rigidbody2D;
     private bool isMoving;
     private float currentLife;
+
+    private Gun _gun;
 
     public event Action OnMovementStarted;
     public event Action OnMovementStopped;
@@ -39,6 +42,7 @@ public class NetworkPlayerController : NetworkBehaviour
 
     private void Awake()
     {
+        _gun = new(_shootColdDown);
         currentLife = maxLife;
         _rigidbody2D = GetComponent<Rigidbody2D>();
     }
@@ -111,16 +115,25 @@ public class NetworkPlayerController : NetworkBehaviour
 
     private void HandleShoot(InputAction.CallbackContext ctx)
     {
-        if (!Object.HasInputAuthority)
+        if (!Object.HasInputAuthority || !_gun.CanShoot)
             return;
 
+
+        StartCoroutine(_gun.ShootColdDown());
+
+        if (_gun.GetBullet(shootPoint))
+            return;
+        
         Rpc_SpawnBullet(shootPoint.position, shootPoint.rotation);
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
     private void Rpc_SpawnBullet(Vector3 position, Quaternion rotation)
     {
-        Runner.Spawn(bulletPrefab, position, rotation, Object.InputAuthority);
+        NetworkObject bulletObject = Runner.Spawn(bulletPrefab, position, rotation, Object.InputAuthority);
+        Bullet bullet = bulletObject.GetComponent<Bullet>();
+
+        _gun.NewBulletStarted(bullet);
     }
 
     public bool Damage(float damage)

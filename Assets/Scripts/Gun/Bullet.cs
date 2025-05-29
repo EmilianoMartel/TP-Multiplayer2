@@ -8,26 +8,41 @@ public class Bullet : NetworkBehaviour
     [SerializeField] private float damage = 1f;
     [SerializeField] private float speed = 10f;
 
+    private Rigidbody2D _rb;
+
     public Action EnemyKilled;
     public Action<Bullet> BulletDisable;
 
     public override void Spawned()
     {
-        GetComponent<Rigidbody2D>().linearVelocity = transform.up * speed;
+        _rb = GetComponent<Rigidbody2D>();
 
-        StartCoroutine(DestroyAfterSeconds(2f));
+        StartShoot();
     }
 
     private IEnumerator DestroyAfterSeconds(float seconds)
     {
         yield return new WaitForSeconds(seconds);
         if (Object.HasStateAuthority)
-            Runner.Despawn(Object);
+            BulletDisable?.Invoke(this);
+    }
+
+    public void StartShoot()
+    {
+        _rb.linearVelocity = transform.up * speed;
+
+        StartCoroutine(DestroyAfterSeconds(2f));
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out NetworkPlayerController player))
             if(player.Damage(damage)) EnemyKilled?.Invoke();
+    }
+
+    public void DespawnObject()
+    {
+        Runner.Despawn(Object);
     }
 }
