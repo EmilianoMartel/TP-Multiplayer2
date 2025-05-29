@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Fusion;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(NetworkTransform))]
 [RequireComponent(typeof(Rigidbody2D))]

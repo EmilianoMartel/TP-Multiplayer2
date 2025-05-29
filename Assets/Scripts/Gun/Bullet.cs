@@ -9,6 +9,7 @@ public class Bullet : NetworkBehaviour
     [SerializeField] private float speed = 10f;
 
     public Action EnemyKilled;
+    public Action<Bullet> BulletDisable;
 
     public override void Spawned()
     {
