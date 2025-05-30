@@ -9,6 +9,7 @@ public class Bullet : NetworkBehaviour
     [SerializeField] private float speed = 10f;
 
     private Rigidbody2D _rb;
+    private NetworkPlayerController _selfPlayer;
 
     public Action EnemyKilled;
     public Action<Bullet> BulletDisable;
@@ -35,9 +36,14 @@ public class Bullet : NetworkBehaviour
 
     }
 
+    public void SetPlayer(NetworkPlayerController player)
+    {
+        _selfPlayer = player;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out NetworkPlayerController player))
+        if (collision.TryGetComponent(out NetworkPlayerController player) && player != _selfPlayer)
             if(player.Damage(damage)) EnemyKilled?.Invoke();
     }
 

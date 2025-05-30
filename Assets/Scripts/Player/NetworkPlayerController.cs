@@ -132,7 +132,7 @@ public class NetworkPlayerController : NetworkBehaviour
     {
         NetworkObject bulletObject = Runner.Spawn(bulletPrefab, position, rotation, Object.InputAuthority);
         Bullet bullet = bulletObject.GetComponent<Bullet>();
-
+        bullet.SetPlayer(this);
         _gun.NewBulletStarted(bullet);
     }
 
