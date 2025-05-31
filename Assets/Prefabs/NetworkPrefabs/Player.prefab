@@ -98,7 +98,6 @@ GameObject:
   m_Component:
   - component: {fileID: 177636507868917269}
   - component: {fileID: 3088500391351359414}
-  - component: {fileID: 3046610773141166307}
   - component: {fileID: 8634777702512041500}
   - component: {fileID: 1054307954889207079}
   - component: {fileID: 3259525859443407692}
@@ -144,26 +143,10 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 3046610773141166307}
   - {fileID: 8634777702512041500}
   - {fileID: 1054307954889207079}
   - {fileID: 2998052374007429048}
   ForceRemoteRenderTimeframe: 0
---- !u!114 &3046610773141166307
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7948649253927207806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d81743e38a40f644bad3b4634571556, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  bulletPrefab: {fileID: 0}
-  firePoint: {fileID: 0}
 --- !u!114 &8634777702512041500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,14 +159,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97ee611634478ea46b0f3389c85a7c9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraTarget: {fileID: 0}
-  view: {fileID: 7502922787591293129}
+  _cameraTarget: {fileID: 0}
+  _view: {fileID: 4468847741234635414}
   shootAction: {fileID: 1120369429361536294, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   shootPoint: {fileID: 2352082479807939768}
+  _shootColdDown: 1.5
   bulletPrefab:
     RawGuidValue: 88bfcbbd193f60b478a89246b6de14c3
-  maxLife: 10
-  moveSpeed: 5
+  _respawnColdDown: 0.5
+  _maxLife: 10
+  _moveSpeed: 5
 --- !u!114 &1054307954889207079
 MonoBehaviour:
   m_ObjectHideFlags: 0

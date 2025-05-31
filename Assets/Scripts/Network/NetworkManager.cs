@@ -12,7 +12,7 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference lookAction;
     [SerializeField] private NetworkPrefabRef playerPrefab;
-    [SerializeField] private Transform[] spawnPositions;
+    [SerializeField] private List<Transform> _spawnPositions;
 
     private readonly Dictionary<PlayerRef, NetworkObject> spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
     private readonly Dictionary<PlayerRef, PlayerStats> playerStats = new();
@@ -53,7 +53,7 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
         {
             GameMode = GameMode.AutoHostOrClient,
             SceneManager = networkRunner.gameObject.AddComponent<NetworkSceneManagerDefault>(),
-            PlayerCount = spawnPositions.Length
+            PlayerCount = _spawnPositions.Count
         };
 
         Task<StartGameResult> startTask = networkRunner.StartGame(startGameArgs);
@@ -70,7 +70,7 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
 
     private void SpawnNewPlayer(NetworkRunner runner, PlayerRef player)
     {
-        Vector3 spawnPosition = spawnPositions[spawnedPlayers.Count].position;
+        Vector3 spawnPosition = _spawnPositions[GetRandomPosition()].position;
         NetworkObject networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
         spawnedPlayers[player] = networkPlayerObject;
 
@@ -87,6 +87,17 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
         }
     }
 
+    private int GetRandomPosition()
+    {
+        return UnityEngine.Random.Range(0, _spawnPositions.Count);
+    }
+
+    public Transform GetRandomSpawnPosition()
+    {
+        return _spawnPositions[GetRandomPosition()];
+    }
+
+    //INETWORK
     void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner)
     {
         if (networkRunner.IsClient)

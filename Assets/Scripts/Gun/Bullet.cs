@@ -33,7 +33,6 @@ public class Bullet : NetworkBehaviour
         _rb.linearVelocity = transform.up * speed;
 
         StartCoroutine(DestroyAfterSeconds(2f));
-
     }
 
     public void SetPlayer(NetworkPlayerController player)
@@ -44,7 +43,7 @@ public class Bullet : NetworkBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out NetworkPlayerController player) && player != _selfPlayer)
-            if(player.Damage(damage)) EnemyKilled?.Invoke();
+            if(player.CanReciveDamage() && player.Damage(damage)) EnemyKilled?.Invoke();
     }
 
     public void DespawnObject()
