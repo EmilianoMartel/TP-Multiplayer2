@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRunnerCallbacks
 {
@@ -13,6 +12,7 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
     [SerializeField] private InputActionReference lookAction;
     [SerializeField] private NetworkPrefabRef playerPrefab;
     [SerializeField] private List<Transform> _spawnPositions;
+    [SerializeField] private int KillAmountToFinish = 5;
 
     private readonly Dictionary<PlayerRef, NetworkObject> spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
     private readonly Dictionary<PlayerRef, PlayerStats> playerStats = new();

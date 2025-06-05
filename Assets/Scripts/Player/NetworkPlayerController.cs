@@ -199,6 +199,8 @@ public class NetworkPlayerController : NetworkBehaviour
     {
         if (_collider != null) _collider.enabled = true;
         _currentLife = _maxLife;
+        _view.gameObject.SetActive(true);
+        transform.position = positionToRespawn.position;
         _canReciveDamage = true;
     }
 
