@@ -126,7 +126,7 @@ public class NetworkPlayerController : NetworkBehaviour
             OnMovementStopped?.Invoke();
         }
 
-        RotateAimTarget(networkInput.LookDirection);
+        Rpc_RotateAimTarget(networkInput.LookDirection);
     }
 
     private Vector2 GetMoveDirection(NetworkInputData networkInput)
@@ -148,7 +148,8 @@ public class NetworkPlayerController : NetworkBehaviour
         return moveDirection.normalized;
     }
 
-    private void RotateAimTarget(Vector2 lookDir)
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void Rpc_RotateAimTarget(Vector2 lookDir)
     {
         float rotationZ = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg;
         _view.transform.rotation = Quaternion.Euler(0f, 0f, rotationZ - 90f); //This magic number is the offset view
@@ -162,9 +163,15 @@ public class NetworkPlayerController : NetworkBehaviour
 
         StartCoroutine(_gun.ShootColdDown());
 
+        Rpc_RestartBullet();
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void Rpc_RestartBullet()
+    {
         if (_gun.GetBullet(shootPoint))
             return;
-        
+
         Rpc_SpawnBullet(shootPoint.position, shootPoint.rotation);
     }
 

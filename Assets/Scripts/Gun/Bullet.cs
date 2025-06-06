@@ -16,9 +16,15 @@ public class Bullet : NetworkBehaviour
 
     public override void Spawned()
     {
-        _rb = GetComponent<Rigidbody2D>();
-
         StartShoot();
+    }
+
+    public override void FixedUpdateNetwork()
+    {
+        if (!GetInput(out NetworkInputData networkInput))
+            return;
+
+        transform.position += transform.up * speed * Time.deltaTime;
     }
 
     private IEnumerator DestroyAfterSeconds(float seconds)
@@ -28,10 +34,16 @@ public class Bullet : NetworkBehaviour
             BulletDisable?.Invoke(this);
     }
 
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void Rpc_Respawn(Vector3 position, Quaternion rotation)
+    {
+        transform.position = position;
+        transform.rotation = rotation;
+        gameObject.SetActive(true);
+    }
+
     public void StartShoot()
     {
-        _rb.linearVelocity = transform.up * speed;
-
         StartCoroutine(DestroyAfterSeconds(2f));
     }
 
@@ -43,7 +55,10 @@ public class Bullet : NetworkBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out NetworkPlayerController player) && player != _selfPlayer)
-            if(player.CanReciveDamage() && player.Damage(damage)) EnemyKilled?.Invoke();
+        {
+            Debug.Log("Damaged");
+            if (player.CanReciveDamage() && player.Damage(damage)) EnemyKilled?.Invoke();
+        }
     }
 
     public void DespawnObject()

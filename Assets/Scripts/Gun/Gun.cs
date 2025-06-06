@@ -48,9 +48,7 @@ public class Gun
 
         Bullet temp = _bulletDisablePool[0];
         _bulletDisablePool.RemoveAt(0);
-        temp.transform.position = shootPoint.position;
-        temp.transform.rotation = shootPoint.rotation;
-        temp.gameObject.SetActive(true);
+        temp.Rpc_Respawn(shootPoint.position,shootPoint.rotation);
         temp.StartShoot();
         return temp;
     }
