@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 5059261443206180466}
   - component: {fileID: 4198037770474512002}
   - component: {fileID: 7912265547161358532}
+  - component: {fileID: 304846338877119233}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -135,6 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f75b312b5d92ed4499bd99d9a913f0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 1
   speed: 10
 --- !u!114 &5059261443206180466
 MonoBehaviour:
@@ -154,6 +156,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 8250491006706271624}
+  - {fileID: 304846338877119233}
   ForceRemoteRenderTimeframe: 0
 --- !u!50 &4198037770474512002
 Rigidbody2D:
@@ -218,3 +221,20 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.3
+--- !u!114 &304846338877119233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5695941946281673390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
