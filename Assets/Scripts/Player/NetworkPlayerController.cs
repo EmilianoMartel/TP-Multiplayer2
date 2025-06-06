@@ -12,6 +12,8 @@ public class NetworkPlayerController : NetworkBehaviour
     [SerializeField] private Transform _cameraTarget;
     [SerializeField] private GameObject _view;
 
+    [SerializeField] private PlayerStats _stats;
+
     [Header("Shoot")]
     [SerializeField] private InputActionReference shootAction;
     [SerializeField] private Transform shootPoint;
@@ -69,7 +71,7 @@ public class NetworkPlayerController : NetworkBehaviour
 
     private void Awake()
     {
-        _gun = new(_shootColdDown);
+        _gun = new(_shootColdDown,_stats);
         _currentLife = _maxLife;
         _rigidbody2D = GetComponent<Rigidbody2D>();
 

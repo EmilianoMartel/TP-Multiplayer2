@@ -3,20 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 public class Gun
 {
     private float _coldDownShoot = 0;
     private bool _canShoot = true;
 
+    private PlayerStats _stats;
+
     private List<Bullet> _activeBullets = new();
     private List<Bullet> _bulletDisablePool = new();
 
     public bool CanShoot { get { return _canShoot; } }
 
-    public Gun(float coldDown)
+    public Action EnemyKilled;
+
+    public Gun(float coldDown, PlayerStats stats)
     {
         _coldDownShoot = coldDown;
+        _stats = stats;
     }
 
     public void DisableGun()
@@ -53,6 +59,7 @@ public class Gun
     {
         _activeBullets.Add(bullet);
         bullet.BulletDisable += HandleDisableBullet;
+        bullet.EnemyKilled += () => _stats.AddKill();
     }
 
     private void HandleDisableBullet(Bullet bullet)

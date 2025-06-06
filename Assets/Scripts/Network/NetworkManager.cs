@@ -20,15 +20,18 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
     private NetworkRunner networkRunner;
     private Camera _camera;
 
+    public IReadOnlyDictionary<PlayerRef, NetworkObject> Players => spawnedPlayers;
+
     public event Action OnConnected;
     public event Action OnDisconnected;
     public event Action<string> OnNewPlayerJoined;
     public event Action<string> OnJoinedPlayerLeft;
 
-   public NetworkPlayerController LocalPlayer { get; set; }
+    public NetworkPlayerController LocalPlayer { get; set; }
 
     async void Start()
     {
+        PlayerStats.OnKillsUpdated += HandlePlayerKills;
         _camera = Camera.main;
         moveAction.action.Enable();
         bool sessionStarted = await StartGameSession();
@@ -74,8 +77,10 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
         NetworkObject networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
         spawnedPlayers[player] = networkPlayerObject;
 
-        if(networkPlayerObject.TryGetComponent<PlayerStats>(out PlayerStats stats))
+        if (networkPlayerObject.TryGetComponent<PlayerStats>(out PlayerStats stats))
+        {
             playerStats[player] = stats;
+        }
     }
 
     private void DespawnPlayer(NetworkRunner runner, PlayerRef player)
@@ -90,6 +95,11 @@ public class NetworkManager : MonoBehaviourSingleton<NetworkManager>, INetworkRu
     private int GetRandomPosition()
     {
         return UnityEngine.Random.Range(0, _spawnPositions.Count);
+    }
+
+    private void HandlePlayerKills(PlayerRef player, int kills)
+    {
+        if (kills >= KillAmountToFinish) Debug.Log("Finish");
     }
 
     public Transform GetRandomSpawnPosition()
